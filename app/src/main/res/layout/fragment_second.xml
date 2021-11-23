@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SecondFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tabcurr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <TextView
+                android:padding="5dip"
+                android:text="Currency" />
+
+            <TextView
+                android:padding="5dip" />
+
+            <TextView
+                android:padding="5dip"
+                android:text="SEK" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:padding="5dip"
+                android:text="USD" />
+
+            <TextView
+                android:padding="5dip"
+                android:text="0.110" />
+
+            <TextView
+                android:gravity="center"
+                android:padding="5dip"
+                android:text="1" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:padding="5dip"
+                android:text="EUR" />
+
+            <TextView
+                android:padding="5dip"
+                android:text="0.099" />
+
+            <TextView
+                android:gravity="center"
+                android:padding="5dip"
+                android:text="1" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:padding="5dip"
+                android:text="GBP" />
+
+            <TextView
+                android:padding="5dip"
+                android:text="0.084" />
+
+            <TextView
+                android:gravity="center"
+                android:padding="5dip"
+                android:text="1" />
+        </TableRow>
+    </TableLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
+
+
+
+
