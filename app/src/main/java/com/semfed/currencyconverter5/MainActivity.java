@@ -1,36 +1,28 @@
 package com.semfed.currencyconverter5;
 
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-
 import com.google.android.material.tabs.TabLayout;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+import org.json.JSONException;
+import org.json.JSONObject;
 
+public class MainActivity extends AppCompatActivity{
     TabLayout tabLayout;
-    TableLayout tableCurrency;
     ViewPager2 pager2;
     FragmentAdapter adapter;
-    Spinner s1, s2;
-    String vs1, vs2;
-    int i1, i2;
-    double changeToSEK, changeFromSEK;
-    float inputValue, outputValue;
-    EditText eInput;
-    TextView tOutput;
+    private static String url = "http://data.fixer.io/api/latest?access_key=349fbdb83017f2b6ca306351be7b82e1";
+    String[][] conversionMatrix = new String[7][2];
+    private String myString = "hello";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +30,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
 
 
-        s1 = (Spinner) findViewById(R.id.sp1);
-        s2 = (Spinner) findViewById(R.id.sp2);
-        eInput = (EditText) findViewById(R.id.editTextAmount);
-        tOutput = (TextView) findViewById(R.id.result);
-
-        tableCurrency = (TableLayout) findViewById(R.id.tabcurr);
 
         tabLayout = findViewById(R.id.tab_layout);
         pager2 = findViewById(R.id.view_pager2);
@@ -72,61 +58,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-
-
-
-        eInput.addTextChangedListener(new TextWatcher() {
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            public void afterTextChanged(Editable s) {
-       /*
-                //we get the value to convert
-                eInput.getText().toString();
-                inputValue = Float.parseFloat(eInput.getText().toString());
-                tOutput.setText(outputValue + "");
-
-                vs1 = s1.getSelectedItem().toString();
-                vs2 = s2.getSelectedItem().toString();
-
-
-                for (int i = 1; i <= tableCurrency.getChildCount(); i++) {
-
-                    //qui definisco una riga per ogni I
-                    TableRow row = (TableRow) tableCurrency.getChildAt(i);
-                    //per ogni riga leggo tutti gli elementi della prima colonna
-                    TextView tv = (TextView) row.getChildAt(0);
-
-                    if (vs1.contentEquals(tv.getText())) {
-                        i1 = i;
-                    }
-
-                    if (vs2.contentEquals(tv.getText())) {
-                        i2 = i;
-                    }
-
-                    TableRow rigas1 = (TableRow) tableCurrency.getChildAt(i1);
-                    TableRow rigas2 = (TableRow) tableCurrency.getChildAt(i2);
-                    TextView changeCurrency1 = (TextView) rigas1.getChildAt(1);
-                    TextView changeCurrency2 = (TextView) rigas2.getChildAt(1);
-
-                    changeToSEK = 1 / (Float.parseFloat((String) changeCurrency1.getText()));
-                    changeFromSEK = Float.parseFloat((String) changeCurrency2.getText());
-                    outputValue = (float) ((inputValue / changeToSEK) * changeFromSEK);
-
-                }
-
-                */
-            }
-
-
-        });
-
         pager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -134,15 +65,95 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-    }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
     }
+    private class GetContacts extends AsyncTask<Void, Void, Void> {
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String jsonStr = sh.makeServiceCall(url);
+
+            if (jsonStr != null) {
+                try {
+
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+                    JSONObject rates=jsonObj.getJSONObject("rates");
+                    String base = jsonObj.getString("base");
+                    // looping through All
+                    // tmp hash map for single contact
+                    // adding each child node to HashMap key => value
+                    Double rateEURDouble = rates.getDouble("EUR");
+                    Double rateSEKDouble = rates.getDouble("SEK");
+                    Double rateUSDDouble = rates.getDouble("USD");
+                    Double rateGBPDouble = rates.getDouble("GBP");
+                    Double rateCNYDouble = rates.getDouble("CNY");
+                    Double rateJPYDouble = rates.getDouble("JPY");
+                    Double rateKRWDouble = rates.getDouble("KRW");
+
+
+
+
+                    conversionMatrix[0][0]="EUR";
+                    conversionMatrix[1][0]="SEK";
+                    conversionMatrix[2][0]="USD";
+                    conversionMatrix[3][0]="GBP";
+                    conversionMatrix[4][0]="CNY";
+                    conversionMatrix[5][0]="JPY";
+                    conversionMatrix[6][0]="KRW";
+                    conversionMatrix[0][1]= rateEURDouble.toString();
+                    conversionMatrix[1][1]= rateSEKDouble.toString();
+                    conversionMatrix[2][1]= rateUSDDouble.toString();
+                    conversionMatrix[3][1]= rateGBPDouble.toString();
+                    conversionMatrix[4][1]= rateCNYDouble.toString();
+                    conversionMatrix[5][1]= rateJPYDouble.toString();
+                    conversionMatrix[6][1]= rateKRWDouble.toString();
+
+                    Log.d("DEGUB", conversionMatrix[5][1]);
+
+
+                } catch (final JSONException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    "Json parsing error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    });
+
+                }
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Couldn't get json from server. Check LogCat for possible errors!",
+                                Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+        }
 
     }
 }
